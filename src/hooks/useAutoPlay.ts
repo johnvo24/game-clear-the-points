@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { Dot, GameState } from "../types/types";
 
 interface UseAutoPlayProps {
@@ -18,6 +18,9 @@ export function useAutoPlay({
   onDotClick,
   delay,
 }: UseAutoPlayProps) {
+  const onDotClickRef = useRef(onDotClick);
+  onDotClickRef.current = onDotClick;
+
   useEffect(() => {
     if (!autoPlay || gameState !== "PLAYING") return;
     if (dots.length === 0) return;
@@ -26,9 +29,9 @@ export function useAutoPlay({
     if (!targetDot) return;
 
     const timer = setTimeout(() => {
-      onDotClick(targetDot);
+      onDotClickRef.current(targetDot);
     }, delay);
 
     return () => clearTimeout(timer);
-  }, [autoPlay, gameState, dots, onDotClick, nextDotId, delay]);
+  }, [autoPlay, gameState, dots, nextDotId, delay]);
 }
